@@ -11,7 +11,7 @@
         $(document).ready(function(){
             $("#add_item_btn").click(function(e){
                 e.preventDefault();
-                $("#show_item").prepend(`<div class="row p-3">
+                $("#show_item").prepend(`<div class="row p-3" id="append_item">
                     <div class="col-md-3 p-1">
                     <input class="form-control" type="text" name="item_name[]" placeholder="Item Name" required>
 
@@ -36,12 +36,32 @@
                 let row_item = $(this).parent().parent();
                 $(row_item).remove();
             });
+
+            $("#add_form").submit(function(e){
+                e.preventDefault();
+                $("#add_btn").val('Adding...');
+                $.ajax({
+                    url:'action.php',
+                    method:'post',
+                    data: $(this).serialize(),
+                    success: function(response){
+                        $("#add_btn").val('Add');
+                        $('#add_form')[0].reset();
+                        $("#append_item").remove();
+                        $("#show_alert").html(`<div class="alert alert-success" role="alert">${response}</div>`);
+                    }
+                });
+            });
+
         });
     </script>
 </head>
 <body class="bg-dark">
     <div class="container bg-white my-2 p-2 rounded">
-        <form action="" method="POST">
+        <div id="show_alert">
+
+        </div>
+        <form action="" method="POST" id="add_form">
             <div id="show_item">
                 <div class="row p-3">
                     <div class="col-md-3 p-1">
@@ -63,8 +83,8 @@
                 </div>
             </div>
             <div class="row p-3">
-                <button class="btn btn-primary w-25 m-2" type="submit">Add</button>
-                <button class="btn btn-danger w-25 m-2" type="" name="pdfbutton">PDF</button>
+                <button class="btn btn-primary w-25 m-2" type="submit" id="add_btn" >Add</button>
+                <button class="btn btn-danger w-25 m-2" type="" id="pdfbutton" >PDF</button>
             </div>
         </form>
     </div>
