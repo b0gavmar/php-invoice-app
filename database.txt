@@ -1,0 +1,3 @@
+CREATE DATABASE php-invoice-app CHARSET utf8 COLLATA utf8_hungarian_ci;
+
+CREATE TABLE items(id INTEGER PRIMARY KEY AUTO_INCREMENT, name TEXT, price INTEGER, quantity INTEGER);
