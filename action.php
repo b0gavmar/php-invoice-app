@@ -1,6 +1,6 @@
 <?php
 
-print_r($_POST);
+//print_r($_POST);
 $connect = new PDO(dsn: 'mysql:host=localhost;dbname=php_invoice_app',username: 'root');
 foreach($_POST['item_name'] as $key => $value){
     $sql = 'INSERT INTO items(name,price,quantity) VALUES(:name,:price,:qty)';
