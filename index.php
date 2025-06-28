@@ -100,7 +100,7 @@
             </div>
             <div class="row p-3 justify-content-center">
                 <button class="btn btn-primary w-25 m-2" type="submit" id="add_btn" >Add</button>
-                <button class="btn btn-danger w-25 m-2" type="button" id="pdfbutton" >PDF</button>
+                <button class="btn btn-danger w-25 m-2" type="button" id="pdfbutton" target="_blank">PDF</button>
                 <button class="btn btn-success w-25 m-2" type="button" id="add_item_btn" name="add" >Add More</button>
             </div>
         </form>
