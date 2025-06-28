@@ -9,10 +9,8 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js" integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q" crossorigin="anonymous"></script>
     <script>
         $(document).ready(function(){
-            let itemCount = 0;
-            console.log(itemCount);
+            console.log($);
             $("#add_item_btn").click(function(e){
-                //e.preventDefault();
                 $("#show_item").append(`<div class="row p-3 append_item">
                     <div class="col-md-3 p-1">
                     <input class="form-control" type="text" name="item_name[]" placeholder="Item Name" required>
@@ -31,26 +29,13 @@
 
                     </div>
                 </div>`);
-                itemCount++;
-                console.log(itemCount);
-                if(itemCount>0){
-                    $('.remove_item_btn').prop("disabled",false);
-                }
             });
 
             $(document).on('click', '.remove_item_btn', function(e){
                 e.preventDefault();
                 $(this).closest('.append_item').remove();
-
-                itemCount--;
-
-                console.log(itemCount);
-                if (itemCount <= 0) {
-                    $('.remove_item_btn').prop('disabled', true);
-                }
+                console.log("del");
             });
-
-
 
             $("#add_form").submit(function(e){
                 e.preventDefault();
@@ -94,8 +79,8 @@
         </div>
         <form action="" method="POST" id="add_form">
             <div id="show_item">
-                <div class="row p-3">
-                    <div class="col-md-3 p-1 append_item">
+                <div class="row p-3 append_item">
+                    <div class="col-md-3 p-1">
                     <input class="form-control" type="text" name="item_name[]" placeholder="Item Name" required>
 
                     </div>
@@ -108,7 +93,7 @@
 
                     </div>
                     <div class="col-md-3 p-1">
-                    <button class="btn btn-danger w-100 remove_item_btn"  type="button" name="add" disabled>Remove</button>
+                    <button class="btn btn-danger w-100 remove_item_btn"  type="button" name="add">Remove</button>
 
                     </div>
                 </div>
