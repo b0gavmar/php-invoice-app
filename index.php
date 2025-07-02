@@ -1,3 +1,12 @@
+<?php
+$items = [
+    ['id' => 1, 'name' => 'Alma', 'price' => 12],
+    ['id' => 2, 'name' => 'Körte', 'price' => 23],
+    ['id' => 3, 'name' => 'Ananász', 'price' => 34],
+    ['id' => 4, 'name' => 'Ananász2', 'price' => 45],
+];
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,7 +18,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js" integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q" crossorigin="anonymous"></script>
     <script>
         $(document).ready(function(){
-            console.log($);
+            //console.log($);
             $("#add_item_btn").click(function(e){
                 $("#show_item").append(`<div class="row p-3 append_item">
                     <div class="col-md-3 p-1">
@@ -69,6 +78,11 @@
                 });
             });
 
+            $(document).on('change','.form-select',function(){
+                let price = $(this).find(':selected').data('price'); //sima jsben dataset.price
+                $(this).closest(".append_item").find('input[name="item_price"]').val(price + " / db");
+            });
+
         });
     </script>
 </head>
@@ -81,11 +95,20 @@
             <div id="show_item">
                 <div class="row p-3 append_item">
                     <div class="col-md-3 p-1">
-                    <input class="form-control" type="text" name="item_name[]" placeholder="Item Name" required>
-
+                        <select class="form-select" name="item_id[]" placeholder="Válasszon terméket" required>
+                            <?php foreach($items as $item): ?>
+                                <option 
+                                    value="<?= $item['id'] ?>"
+                                    data-price="<?= $item['price'] ?>">
+                                    
+                                    <?php echo htmlspecialchars($item['name']) ?> 
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                        <!-- "?=" === "php echo" -->
                     </div>
                     <div class="col-md-3 p-1">
-                    <input class="form-control" type="number" name="item_price[]" placeholder="Item Price" required>
+                    <input class="form-control" type="text" name="item_price" placeholder="Termék ára" disabled>
 
                     </div>
                     <div class="col-md-3 p-1">

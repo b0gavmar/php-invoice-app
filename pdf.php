@@ -4,7 +4,7 @@ use Dompdf\Dompdf;
 
 $connect = new PDO(dsn: 'mysql:host=localhost;dbname=php_invoice_app',username: 'root');
 
-$sql = 'SELECT * FROM items';
+$sql = 'SELECT * FROM orders';
 $stmt = $connect->prepare($sql);
 $stmt->execute();
 $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
