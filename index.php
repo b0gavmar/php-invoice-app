@@ -1,12 +1,3 @@
-<?php
-$items = [
-    ['id' => 1, 'name' => 'Alma', 'price' => 12],
-    ['id' => 2, 'name' => 'Körte', 'price' => 23],
-    ['id' => 3, 'name' => 'Ananász', 'price' => 34],
-    ['id' => 4, 'name' => 'Ananász2', 'price' => 45],
-];
-?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -19,6 +10,23 @@ $items = [
     <script>
         $(document).ready(function(){
             //console.log($);
+
+            $.ajax({
+                url: 'load.php',
+                method: 'GET',
+                success: function(resp) {
+                    const items = JSON.parse(resp);
+
+                    let options = "";
+                    items.forEach(element => {
+                        options += `<option value="${element.id}" data-price="${element.price}">
+                                        ${element.name}
+                                    </option>`;
+                    });
+                    $("#itemSelect").html(options);
+                }
+            })
+
             $("#add_item_btn").click(function(e){
                 $("#show_item").append(`<div class="row p-3 append_item">
                     <div class="col-md-3 p-1">
@@ -51,7 +59,7 @@ $items = [
                 $("#add_btn").val('Adding...');
                 $.ajax({
                     url:'action.php',
-                    method:'post',
+                    method:'POST',
                     data: $(this).serialize(),
                     success: function(response){
                         $("#add_btn").val('Add');
@@ -95,29 +103,20 @@ $items = [
             <div id="show_item">
                 <div class="row p-3 append_item">
                     <div class="col-md-3 p-1">
-                        <select class="form-select" name="item_id[]" placeholder="Válasszon terméket" required>
-                            <?php foreach($items as $item): ?>
-                                <option 
-                                    value="<?= $item['id'] ?>"
-                                    data-price="<?= $item['price'] ?>">
-                                    
-                                    <?php echo htmlspecialchars($item['name']) ?> 
-                                </option>
-                            <?php endforeach; ?>
+                        <select id="itemSelect" class="form-select" name="item_id[]" placeholder="Válasszon terméket" required>
                         </select>
-                        <!-- "?=" === "php echo" -->
                     </div>
-                    <div class="col-md-3 p-1">
-                    <input class="form-control" type="text" name="item_price" placeholder="Termék ára" disabled>
 
+                    <div class="col-md-3 p-1">
+                        <input class="form-control" type="text" name="item_price" placeholder="Termék ára" disabled>
                     </div>
-                    <div class="col-md-3 p-1">
-                    <input class="form-control" type="number" name="item_qty[]" placeholder="Item Quantity" required>
 
+                    <div class="col-md-3 p-1">
+                        <input class="form-control" type="number" name="item_qty[]" placeholder="Item Quantity" required>
                     </div>
-                    <div class="col-md-3 p-1">
-                    <button class="btn btn-danger w-100 remove_item_btn"  type="button" name="add">Remove</button>
 
+                    <div class="col-md-3 p-1">
+                        <button class="btn btn-danger w-100 remove_item_btn"  type="button" name="add">Remove</button>
                     </div>
                 </div>
             </div>
