@@ -1,30 +1,13 @@
 <?php
+session_start();
 
-//print_r($_POST);
 $connect = new PDO(dsn: 'mysql:host=localhost;dbname=php_invoice_app',username: 'root');
-
-/*$itemNames = $_POST['item_name'];
-$itemPrices = $_POST['item_price'];
-$itemQtys = $_POST['item_qty'];
-
-
-for ($i = 0; $i < count($itemNames); $i++) {
-    $sql = 'INSERT INTO orders(name,price,quantity) VALUES(:name,:price,:qty)';
-    $stmt = $connect->prepare($sql);
-    $stmt->execute([
-        ':name' => $itemNames[$i],
-        ':price' => $itemPrices[$i],
-        ':qty' => $itemQtys[$i],
-    ]);
-}
-*/
 
 $stmt = $connect->prepare("INSERT INTO orders (sum) VALUES (0)");
 $stmt->execute();
 $orderId = $connect->lastInsertId();
 
 $sum = 0;
-
 foreach($_POST['item_id'] as $key => $itemId){
     $qty = $_POST['item_qty'][$key];
 
@@ -43,4 +26,11 @@ foreach($_POST['item_id'] as $key => $itemId){
 $stmtUpdate = $connect->prepare('UPDATE orders SET sum = :sum WHERE id = :id');
 $stmtUpdate->execute(['sum' => $sum, 'id' => $orderId]);
 
-echo 'Mentés sikeres';
+$token = bin2hex(random_bytes(16));
+$_SESSION['order_tokens'][$orderId] = $token;
+
+echo json_encode([
+    "status" => "ok",
+    "order_id" => $orderId,
+    "token" => $token
+]);

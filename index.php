@@ -95,7 +95,10 @@
 
                         fillSelect($(".form-select"));
 
-                        $("#show_alert").html(`<div class="alert alert-success" role="alert">${response}</div>`);
+                        let data = JSON.parse(response);
+                        $("#show_alert").html(`<div class="alert alert-success" role="alert">Rendelés sikeresen mentve #${data.order_id}</div>`);
+
+                        window.open(`pdf.php?order_id=${data.order_id}&token=${data.token}`, "_blank");
                     }
                 });
             });
@@ -134,10 +137,9 @@
                     </div>
                 </div>
             </div>
-            <div class="row p-3 justify-content-center">
-                <button class="btn btn-primary w-25 m-2" type="submit" id="add_btn" >Mentés</button>
-                <a class="btn btn-danger w-25 m-2" type="button" href="pdf.php" id="pdfbutton" target="_blank">PDF</a>
-                <button class="btn btn-success w-25 m-2" type="button" id="add_item_btn" name="add" >Több hozzáadása</button>
+            <div class="row p-3 justify-content-center bg-secondary  m-2 rounded">
+                <button class="btn btn-info w-50 m-2 border border-dark border-2" type="submit" id="add_btn" >Mentés</button>
+                <button class="btn btn-success w-25 m-2 border border-dark border-2" type="button" id="add_item_btn" name="add" >Több hozzáadása</button>
             </div>
         </form>
     </div>
