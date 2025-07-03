@@ -43,4 +43,4 @@ foreach($_POST['item_id'] as $key => $itemId){
 $stmtUpdate = $connect->prepare('UPDATE orders SET sum = :sum WHERE id = :id');
 $stmtUpdate->execute(['sum' => $sum, 'id' => $orderId]);
 
-echo 'Items inserted';
+echo 'Mentés sikeres';
