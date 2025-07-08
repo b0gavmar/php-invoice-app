@@ -1,76 +1,53 @@
 <?php
+session_start();
+
 require_once 'vendor/autoload.php';
 use Dompdf\Dompdf;
 
 $connect = new PDO(dsn: 'mysql:host=localhost;dbname=php_invoice_app',username: 'root');
 
-$sql = 'SELECT * FROM items';
-$stmt = $connect->prepare($sql);
-$stmt->execute();
-$rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+$orderId = $_GET['order_id'] ?? null;
+$token = $_GET['token'] ?? null;
 
-$total = 0;
-$i = 1;
+if (!$orderId || !$token) {
+    die("Hiányzó paraméter.");
+}
 
-$html = '<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Invoice</title>
-    <style>
-        table,td,th{
-            border: 1px solid black;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <h2>
-            Invoice
-        </h2>
+if (!isset($_SESSION['order_tokens'][$orderId]) || $_SESSION['order_tokens'][$orderId] !== $token) {
+    die("Nincs jogosultság ehhez a rendeléshez.");
+}
 
-        <table>
-            <thead>
-                <tr>
-                    <th>Row Number</th>
-                    <th>ID</th>
-                    <th>Item</th>
-                    <th>Price</th>
-                    <th>Quantity</th>
-                    <th>Total</th>
-                </tr>
-            </thead>
-            <tbody>';
+$stmtOrder = $connect->prepare("SELECT * FROM orders WHERE id = :id");
+$stmtOrder->execute(['id' => $orderId]);
+$order = $stmtOrder->fetch(PDO::FETCH_ASSOC);
 
-foreach ($rows as $row) {
-    $html .=    '<tr>
-                    <td>'. $i .'</td>
-                    <td>'. $row['id'].'</td>
-                    <td>'. $row['name'].'</td>
-                    <td>'. number_format($row['price'],2).'</td>
-                    <td>'. $row['quantity'].'</td>
-                    <td>'. number_format($row['price'] * $row['quantity'] ,2).'</td>
-                </tr>';
-    $total += $row['price'] * $row['quantity'];
-    $i++;
-};
-
-$html .= '            </tbody>
-            <tfoot>
-                <tr>
-                    <th colspan="5">Total</th>
-                    <th>'.number_format($total,2).'</th>
-                </tr>
-            </tfoot>
-        </table>
-    </div>
-    
-</body>
-</html>';
+$stmtItems = $connect->prepare("
+    SELECT order_items.quantity, items.name, items.price
+    FROM order_items 
+    JOIN items ON items.id = order_items.item_id
+    WHERE order_items.order_id = :id
+");
+$stmtItems->execute(['id' => $orderId]);
+$orderItems = $stmtItems->fetchAll(PDO::FETCH_ASSOC);
 
 $dompdf = new Dompdf();
+
+$html = "<h1>Számla #{$order['id']}</h1>";
+$html .= "<p>Összesen: {$order['sum']} Ft</p>";
+$html .= "<table border='1' cellpadding='5'>
+<tr><th>Termék</th><th>Mennyiség</th><th>Egységár</th><th>Összesen</th></tr>";
+foreach($orderItems as $item){
+    $lineTotal = $item['quantity'] * $item['price'];
+    $html .= "<tr>
+        <td>{$item['name']}</td>
+        <td>{$item['quantity']}</td>
+        <td>{$item['price']} Ft</td>
+        <td>{$lineTotal} Ft</td>
+    </tr>";
+}
+$html .= "</table>";
+
 $dompdf->loadHtml($html);
 $dompdf->setPaper('A4','portrait');
 $dompdf->render();
-$dompdf->stream('invoice.pdf');
+$dompdf->stream("szamla_{$order['id']}.pdf");

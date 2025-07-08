@@ -1,15 +1,36 @@
 <?php
+session_start();
 
-//print_r($_POST);
 $connect = new PDO(dsn: 'mysql:host=localhost;dbname=php_invoice_app',username: 'root');
-foreach($_POST['item_name'] as $key => $value){
-    $sql = 'INSERT INTO items(name,price,quantity) VALUES(:name,:price,:qty)';
-    $smtm = $connect->prepare($sql);
-    $smtm->execute([
-        ':name' => $value,
-        ':price' => $_POST['item_price'][$key],
-        ':qty' => $_POST['item_qty'][$key],
-    ]);
-};
 
-echo 'Items inserted';
+$stmt = $connect->prepare("INSERT INTO orders (sum) VALUES (0)");
+$stmt->execute();
+$orderId = $connect->lastInsertId();
+
+$sum = 0;
+foreach($_POST['item_id'] as $key => $itemId){
+    $qty = $_POST['item_qty'][$key];
+
+    $stmtPrice = $connect->prepare("SELECT price FROM items WHERE id = :id");
+    $stmtPrice->execute(['id' => $itemId]);
+    $price = $stmtPrice->fetchColumn();
+
+    $stmtInsert = $connect->prepare("INSERT INTO order_items (order_id, item_id, quantity) VALUES (:orderId, :itemId, :qty)");
+    $stmtInsert->execute([  'orderId' => $orderId, 
+                                    'itemId' => $itemId,
+                                    'qty' => $qty]);
+
+    $sum += $price * $qty;
+}
+
+$stmtUpdate = $connect->prepare('UPDATE orders SET sum = :sum WHERE id = :id');
+$stmtUpdate->execute(['sum' => $sum, 'id' => $orderId]);
+
+$token = bin2hex(random_bytes(16));
+$_SESSION['order_tokens'][$orderId] = $token;
+
+echo json_encode([
+    "status" => "ok",
+    "order_id" => $orderId,
+    "token" => $token
+]);
