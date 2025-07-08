@@ -16,7 +16,7 @@ public class ItemDAO {
 
     public List<Item> getAllItems() throws SQLException {
         List<Item> items = new ArrayList<>();
-        String query = "SELECT id, name, price FROM items";
+        String query = "SELECT id, name, price FROM items ORDER BY name";
 
         try (Statement stmt = connection.createStatement();
              ResultSet rs = stmt.executeQuery(query)) {

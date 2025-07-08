@@ -2,20 +2,37 @@ package org.example.invoiceappdesktop;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.ListView;
+import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import javafx.scene.control.Label;
 import org.example.invoiceappdesktop.db.Database;
 import org.example.invoiceappdesktop.db.ItemDAO;
 import org.example.invoiceappdesktop.models.Item;
 
+import java.math.BigDecimal;
+import java.sql.SQLException;
 import java.util.List;
+import java.util.UUID;
 
 public class TermekekViewController {
+    private ItemDAO dao;
+
+    @FXML
+    private Label itemCountLabel;
+
+    @FXML
+    private ListView<Item> itemListView;
+
+    @FXML
+    private TextField nameField;
+
+    @FXML
+    private TextField priceField;
 
     @FXML
     public void initialize() {
         try {
-            ItemDAO dao = new ItemDAO(Database.getConnection());
+            dao = new ItemDAO(Database.getConnection());
 
             int count = dao.getNumberOfItems();
             itemCountLabel.setText("Termékek száma: " + count);
@@ -29,8 +46,33 @@ public class TermekekViewController {
     }
 
     @FXML
-    private Label itemCountLabel;
+    private void onAdd() {
+        try {
+            String name = nameField.getText();
+            BigDecimal price = new BigDecimal(priceField.getText());
+
+            if (name.length() > 0 && price.compareTo(BigDecimal.ZERO) > 0) {
+                Item item = new Item(UUID.randomUUID(), name, price);
+                dao.insertItem(item);
+                Update();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     @FXML
-    private ListView<Item> itemListView;
+    private void onUpdate() {
+
+    }
+
+    @FXML
+    private void onDelete() {
+
+    }
+
+    private void Update() throws SQLException {
+        List<Item> items = dao.getAllItems();
+        itemListView.getItems().setAll(items);
+    }
 }
