@@ -1,27 +1,27 @@
-CREATE DATABASE php-invoice-app CHARSET utf8 COLLATA utf8_hungarian_ci;
+CREATE DATABASE php_invoice_app CHARSET utf8 COLLATE utf8_hungarian_ci;
 
 CREATE TABLE items (
-    id INT AUTO_INCREMENT PRIMARY KEY,
+    id CHAR(36) PRIMARY KEY,
     name VARCHAR(255),
     price DECIMAL(10,2)
 );
 
 CREATE TABLE orders (
-    id INT AUTO_INCREMENT PRIMARY KEY,
+    id CHAR(36) PRIMARY KEY,
     sum DECIMAL(10,2)
 );
 
 CREATE TABLE order_items (
-    order_id INT,
-    item_id INT,
+    order_id CHAR(36),
+    item_id CHAR(36),
     quantity INT,
     PRIMARY KEY (order_id, item_id),
     FOREIGN KEY (order_id) REFERENCES orders(id),
     FOREIGN KEY (item_id) REFERENCES items(id)
 );
 
-INSERT INTO items (name, price) VALUES
-('Alma', 12),
-('Körte', 23),
-('Ananász', 34),
-('Ananász2', 45);
+INSERT INTO items (id, name, price) VALUES
+(UUID(), 'Alma', 12),
+(UUID(), 'Körte', 23),
+(UUID(), 'Ananász', 34),
+(UUID(), 'Ananász2', 45);

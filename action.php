@@ -1,11 +1,16 @@
 <?php
 session_start();
+require_once 'vendor/autoload.php';
+
+use Ramsey\Uuid\Uuid;
 
 $connect = new PDO(dsn: 'mysql:host=localhost;dbname=php_invoice_app',username: 'root');
 
-$stmt = $connect->prepare("INSERT INTO orders (sum) VALUES (0)");
-$stmt->execute();
-$orderId = $connect->lastInsertId();
+$orderId = Uuid::uuid4()->toString();;
+
+$stmt = $connect->prepare("INSERT INTO orders (id, sum) VALUES (:id, 0)");
+$stmt->execute(['id' => $orderId]);
+
 
 $sum = 0;
 foreach($_POST['item_id'] as $key => $itemId){

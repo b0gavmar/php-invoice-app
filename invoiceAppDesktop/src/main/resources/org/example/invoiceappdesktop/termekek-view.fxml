@@ -11,4 +11,6 @@
             fx:controller="org.example.invoiceappdesktop.TermekekViewController"
             prefHeight="400.0" prefWidth="600.0">
     <Label fx:id="itemCountLabel" text="Termékek száma: ?"></Label>
+    <ListView fx:id="itemListView" layoutX="20" layoutY="20" prefWidth="200" prefHeight="250"/>
+
 </AnchorPane>
