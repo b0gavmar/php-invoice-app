@@ -30,7 +30,6 @@ if (!isset($_SESSION['user_id'])) {
         }
 
         $(document).ready(function(){
-            //console.log($);
 
             $.ajax({
                 url: 'load.php',
@@ -107,13 +106,13 @@ if (!isset($_SESSION['user_id'])) {
                         let data = JSON.parse(response);
                         $("#show_alert").html(`<div class="alert alert-success" role="alert">Rendelés sikeresen mentve #${data.order_id}</div>`);
 
-                        window.open(`pdf.php?order_id=${data.order_id}&token=${data.token}`, "_blank");
+                        window.open(`pdf.php?order_id=${data.order_id}`, "_blank");
                     }
                 });
             });
 
             $(document).on('change','.form-select',function(){
-                let price = $(this).find(':selected').data('price'); //sima jsben dataset.price
+                let price = $(this).find(':selected').data('price');
                 $(this).closest(".append_item").find('input[name="item_price"]').val(price + " / db");
             });
 

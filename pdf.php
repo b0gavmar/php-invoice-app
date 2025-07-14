@@ -1,5 +1,9 @@
 <?php
 session_start();
+if (!isset($_SESSION['user_id'])) {
+    header("Location: login.php");
+    exit;
+}
 
 require_once 'vendor/autoload.php';
 use Dompdf\Dompdf;
@@ -7,18 +11,17 @@ use Dompdf\Dompdf;
 $connect = new PDO(dsn: 'mysql:host=localhost;dbname=php_invoice_app',username: 'root');
 
 $orderId = $_GET['order_id'] ?? null;
-$token = $_GET['token'] ?? null;
 
-if (!$orderId || !$token) {
+if (!$orderId) {
     die("Hiányzó paraméter.");
 }
 
-if (!isset($_SESSION['order_tokens'][$orderId]) || $_SESSION['order_tokens'][$orderId] !== $token) {
+if (!isset($_SESSION['user_id'])) {
     die("Nincs jogosultság ehhez a rendeléshez.");
 }
 
-$stmtOrder = $connect->prepare("SELECT * FROM orders WHERE id = :id");
-$stmtOrder->execute(['id' => $orderId]);
+$stmtOrder = $connect->prepare("SELECT * FROM orders WHERE id = :id AND user_id = :user_id");
+$stmtOrder->execute(['id' => $orderId, 'user_id' => $_SESSION['user_id']]);
 $order = $stmtOrder->fetch(PDO::FETCH_ASSOC);
 
 $stmtItems = $connect->prepare("

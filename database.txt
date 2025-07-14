@@ -8,7 +8,9 @@ CREATE TABLE items (
 
 CREATE TABLE orders (
     id CHAR(36) PRIMARY KEY,
-    sum DECIMAL(10,2)
+    user_id INT NOT NULL,
+    sum DECIMAL(10,2),
+    FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
 CREATE TABLE order_items (
