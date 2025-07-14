@@ -29,6 +29,8 @@ public class TermekekViewController {
     @FXML
     private TextField priceField;
 
+    private UUID itemId;
+
     @FXML
     public void initialize() {
         try {
@@ -38,6 +40,14 @@ public class TermekekViewController {
             itemCountLabel.setText("Termékek száma: " + count);
 
             itemListView.getItems().setAll(dao.getAllItems());
+
+            itemListView.getSelectionModel().selectedItemProperty().addListener((obs, oldItem, newItem) -> {
+                if (newItem != null) {
+                    nameField.setText(newItem.getName());
+                    priceField.setText(newItem.getPrice().toPlainString());
+                    itemId = newItem.getId();
+                }
+            });
 
         } catch (Exception e) {
             itemCountLabel.setText("Hiba: " + e.getMessage());
@@ -63,12 +73,35 @@ public class TermekekViewController {
 
     @FXML
     private void onUpdate() {
+        try {
+            if (itemId != null) {
+                String name = nameField.getText();
+                BigDecimal price = new BigDecimal(priceField.getText());
 
+                if (name.length() > 0 && price.compareTo(BigDecimal.ZERO) > 0) {
+                    Item updatedItem = new Item(itemId, name, price);
+                    dao.updateItem(updatedItem);
+                    Update();
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML
     private void onDelete() {
-
+        try {
+            if (itemId != null) {
+                dao.deleteItem(itemId);
+                itemId = null;
+                nameField.clear();
+                priceField.clear();
+                Update();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private void Update() throws SQLException {

@@ -47,6 +47,25 @@ public class ItemDAO {
         }
     }
 
+    public void deleteItem(UUID id) throws SQLException {
+        String sql = "DELETE FROM items WHERE id = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, id.toString());
+            stmt.executeUpdate();
+        }
+    }
+
+    public void updateItem(Item item) throws SQLException {
+        String sql = "UPDATE items SET name = ?, price = ? WHERE id = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, item.getName());
+            stmt.setBigDecimal(2, item.getPrice());
+            stmt.setString(3, item.getId().toString());
+            stmt.executeUpdate();
+        }
+    }
+
+
     public int getNumberOfItems() throws SQLException {
         String query = "SELECT COUNT(*) FROM items";
 

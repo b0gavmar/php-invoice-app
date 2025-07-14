@@ -15,10 +15,10 @@ public class HelloController {
     @FXML
     private Label welcomeText;
 
-    @FXML
+    /*@FXML
     protected void onHelloButtonClick() {
         welcomeText.setText("Welcome to JavaFX Application!");
-    }
+    }*/
 
     @FXML
     protected void showTermekekClick(ActionEvent event) throws IOException {
