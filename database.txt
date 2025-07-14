@@ -8,7 +8,9 @@ CREATE TABLE items (
 
 CREATE TABLE orders (
     id CHAR(36) PRIMARY KEY,
-    sum DECIMAL(10,2)
+    user_id INT NOT NULL,
+    sum DECIMAL(10,2),
+    FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
 CREATE TABLE order_items (
@@ -18,6 +20,12 @@ CREATE TABLE order_items (
     PRIMARY KEY (order_id, item_id),
     FOREIGN KEY (order_id) REFERENCES orders(id),
     FOREIGN KEY (item_id) REFERENCES items(id)
+);
+
+CREATE TABLE users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL
 );
 
 INSERT INTO items (id, name, price) VALUES
