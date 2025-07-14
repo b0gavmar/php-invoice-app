@@ -4,12 +4,14 @@ require 'load.php';
 
 if($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = $_POST['email'];
+    $password = $_POST['password'];
 
     if(empty($email) || empty($password)) {
 
     } else {
         $stmt = $connect->prepare("SELECT * FROM users WHERE email = ?");
-        $stmt->execute($email);
+        $stmt->execute([$email]);
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
         
         if ($user && password_verify($_POST['password'], $user['password'])) {
             $_SESSION['user_id'] = $user['id'];
